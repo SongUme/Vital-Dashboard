@@ -14,6 +14,8 @@ interface SidebarProps {
   onClose?: () => void;
   districts?: string[];
   departments?: string[];
+  nowViewingTitle?: string;
+  nowViewingDesc?: string;
 }
 
 const DEFAULT_DISTRICTS = ['영통구', '팔달구', '장안구', '권선구'];
@@ -31,7 +33,9 @@ export default function Sidebar({
   isOpen = false,
   onClose = () => {},
   districts = [],
-  departments = []
+  departments = [],
+  nowViewingTitle = '분석 대기',
+  nowViewingDesc = '분석할 병원을 선택해주세요.'
 }: SidebarProps) {
   const districtOptions = Array.isArray(districts) && districts.length > 0 ? districts : DEFAULT_DISTRICTS;
   const departmentOptions = Array.isArray(departments) && departments.length > 0 ? departments : DEFAULT_DEPARTMENTS;
@@ -140,10 +144,10 @@ export default function Sidebar({
           <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mt-auto">
             <h2 className="text-[10px] font-bold text-slate-400 mb-2 tracking-wider">NOW VIEWING</h2>
             <p className="font-bold text-slate-800 text-lg mb-1 break-keep">
-              {selectedDistrict || '전체'} {selectedDept || '전체'}
+              {nowViewingTitle}
             </p>
             <p className="text-xs text-slate-500">
-              순위 목록에서 병원을 선택하면 상세 분석이 표시됩니다.
+              {nowViewingDesc}
             </p>
           </div>
         </div>

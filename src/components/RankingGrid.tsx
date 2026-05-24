@@ -58,6 +58,8 @@ export default function RankingGrid({ hospitals, rankings, selectedHospitalId, o
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {topHospitals.map((h, index) => {
           const isSelected = String(selectedHospitalId) === String(h.id);
+          // 화면 표시 순위 = 현재 필터 결과 기준 index + 1
+          const displayRank = index + 1;
           return (
             <div 
               key={h.id}
@@ -70,9 +72,9 @@ export default function RankingGrid({ hospitals, rankings, selectedHospitalId, o
             >
               <div className="flex justify-between items-start mb-4">
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
-                  ${index < 3 ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'}`}
+                  ${displayRank <= 3 ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'}`}
                 >
-                  {h.cityRank || index + 1}
+                  {displayRank}
                 </div>
                 <span className={`text-[10px] px-2 py-1 rounded-full border font-semibold ${getStatusColor(h.status)}`}>
                   {h.status}
@@ -102,7 +104,7 @@ export default function RankingGrid({ hospitals, rankings, selectedHospitalId, o
                   <span>{h.district} · 리뷰 {h.reviewCount.toLocaleString()}건</span>
                 </div>
                 <div className="pl-4 text-slate-400">
-                  {h.city} 전체 #{h.cityRank} · 상위 {Math.max(1, Math.floor(h.cityRank / h.cityTotal * 100))}%
+                  {h.city} 전체 #{h.cityRank} · 상위 {h.cityTotal > 0 ? Math.max(1, Math.floor(h.cityRank / h.cityTotal * 100)) : '-'}%
                 </div>
               </div>
             </div>
