@@ -1,0 +1,18 @@
+CORS 오류 수정본입니다.
+
+반드시 기존 백엔드 서버를 Ctrl + C로 끄고
+이 폴더의 backend에서 다시 실행해야 합니다.
+
+백엔드:
+cd backend
+py -3.11 -m uvicorn main:app --reload
+
+프론트:
+프로젝트 최상위 폴더
+npm install
+npm run dev
+
+확인:
+http://127.0.0.1:8000/
+http://127.0.0.1:8000/docs
+http://localhost:5173

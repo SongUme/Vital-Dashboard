@@ -1,0 +1,22 @@
+수정 내용
+
+1. 맞춤형 개선 인사이트가 비어 보이는 문제를 수정했습니다.
+- DB의 improvement_keywords_json, strength_keywords_json, weak_categories_json을 프론트 문장으로 변환합니다.
+- 집중 개선 키워드 TOP 5와 강점 키워드를 keywordPositions에서 자동 생성합니다.
+
+2. 관리도 클릭 시 리뷰가 안 나오는 문제를 수정했습니다.
+- anomaly_period와 timeSeries date를 기준으로 리뷰를 연결합니다.
+- 정확한 기간 매칭이 없으면 fallback 리뷰를 보여줍니다.
+- fallback도 없으면 해당 병원의 낮은 감정 점수 리뷰를 보여줍니다.
+
+3. 기존 자동 ID 변환과 React 객체 렌더링 오류 수정은 유지했습니다.
+
+실행 방법
+백엔드:
+cd backend
+py -3.11 -m uvicorn main:app --reload
+
+프론트:
+프로젝트 최상위 폴더에서
+npm install
+npm run dev
