@@ -102,7 +102,7 @@ export default function InsightPanel({ hospital, onDownload }: InsightPanelProps
                 const percent = (kw.mentions / maxMentions) * 100;
                 return (
                   <div key={i} className="flex items-center gap-4 text-sm">
-                    <span className="w-24 text-slate-700 font-medium truncate" title={safeText(kw.name ?? kw.keyword ?? kw)}>{safeText(kw.name ?? kw.keyword ?? kw)}</span>
+                    <span className="w-24 text-slate-700 font-medium truncate" title={safeText(kw.name ?? (kw as any).keyword ?? kw)}>{safeText(kw.name ?? (kw as any).keyword ?? kw)}</span>
                     <div className="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
                       <div className="bg-[#e76e50] h-full rounded-full" style={{ width: `${percent}%` }} />
                     </div>
@@ -140,7 +140,7 @@ export default function InsightPanel({ hospital, onDownload }: InsightPanelProps
             
             <div className="mb-6">
               <div className="flex justify-between items-start mb-1">
-                <h4 className="font-bold text-slate-800">{safeText(bestCategory.name ?? bestCategory.category)}</h4>
+                <h4 className="font-bold text-slate-800">{safeText(bestCategory.name ?? (bestCategory as any).category)}</h4>
                 <span className="text-xs font-bold text-positive">+{Math.max(0, bestCategory.score - bestCategory.marketAvg).toFixed(1)}점</span>
               </div>
               <div className="flex items-end gap-2">
@@ -151,7 +151,7 @@ export default function InsightPanel({ hospital, onDownload }: InsightPanelProps
 
             <div>
               <div className="flex justify-between items-start mb-1">
-                <h4 className="font-bold text-slate-800">{safeText(secondBestCategory.name ?? secondBestCategory.category)}</h4>
+                <h4 className="font-bold text-slate-800">{safeText(secondBestCategory.name ?? (secondBestCategory as any).category)}</h4>
                 <span className="text-xs font-bold text-positive">+{Math.max(0, secondBestCategory.score - secondBestCategory.marketAvg).toFixed(1)}점</span>
               </div>
               <div className="flex items-end gap-2">
@@ -167,7 +167,7 @@ export default function InsightPanel({ hospital, onDownload }: InsightPanelProps
             <div className="flex flex-wrap gap-2">
               {topPositiveKeywords.map((kw, i) => (
                 <span key={i} className="text-xs font-semibold px-2 py-1 bg-positive/10 text-positive rounded-lg">
-                  {safeText(kw.name ?? kw.keyword ?? kw)}
+                  {safeText(kw.name ?? (kw as any).keyword ?? kw)}
                 </span>
               ))}
             </div>

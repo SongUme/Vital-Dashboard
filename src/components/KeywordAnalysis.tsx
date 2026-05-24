@@ -69,7 +69,7 @@ export default function KeywordAnalysis({ hospital }: KeywordAnalysisProps) {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-slate-400">{String(kw.rank).padStart(2, '0')}</span>
-                  <h3 className="font-bold text-slate-800">{safeText(kw.name ?? kw.keyword ?? kw)}</h3>
+                  <h3 className="font-bold text-slate-800">{safeText(kw.name ?? (kw as any).keyword ?? kw)}</h3>
                   <span className="text-[10px] bg-blue-50 text-primary px-2 py-0.5 rounded-full font-semibold border border-blue-100">
                     {safeText(kw.category)}
                   </span>

@@ -195,7 +195,7 @@ const SentimentControlChart: React.FC<Props> = ({ hospital }) => {
                     <p className="text-sm text-slate-700 leading-relaxed font-medium">"{safeText(review.content)}"</p>
                     {review.keywords && review.keywords.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-3">
-                        {review.keywords.map((kw, kIdx) => (
+                        {review.keywords.map((kw: any, kIdx: number) => (
                           <span key={kIdx} className="text-[10px] text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
                             #{safeText(kw)}
                           </span>
