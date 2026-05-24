@@ -325,7 +325,58 @@ def get_rankings(
     district: Optional[str] = Query(None),
     specialty: Optional[str] = Query(None)
 ):
-    return get_hospitals(district=district, specialty=specialty)
+    conn = get_db_connection()
+    try:
+        query = """
+            SELECT
+                hospital_id,
+                hospital_name,
+                district_name,
+                specialty_name,
+                raw_review_count,
+                analyzed_review_count,
+                overall_score,
+                percentile,
+                rank_in_specialty_all_suwon,
+                rank_in_specialty_district,
+                total_hospitals_in_specialty,
+                total_hospitals_in_specialty_district,
+                score_grade,
+                naver_url
+            FROM web_hospital_full_ranking
+            WHERE 1=1
+        """
+        params = []
+        if district:
+            query += " AND district_name = ?"
+            params.append(district)
+        if specialty:
+            query += " AND specialty_name = ?"
+            params.append(specialty)
+
+        query += " ORDER BY overall_score DESC, raw_review_count DESC, hospital_name ASC LIMIT 20"
+        rows = conn.execute(query, params).fetchall()
+
+        result = []
+        for r in rows:
+            d = row_to_dict(r)
+            result.append({
+                "hospital_id": d["hospital_id"],
+                "hospital_name": d["hospital_name"],
+                "district_name": d["district_name"],
+                "specialty_name": d["specialty_name"],
+                "review_count": d.get("raw_review_count") or d.get("analyzed_review_count") or 0,
+                "overall_score": d.get("overall_score") or 0,
+                "rank_in_specialty_all_suwon": d.get("rank_in_specialty_all_suwon") or 0,
+                "rank_in_specialty_district": d.get("rank_in_specialty_district") or 0,
+                "total_hospitals_in_specialty": d.get("total_hospitals_in_specialty") or 0,
+                "total_hospitals_in_specialty_district": d.get("total_hospitals_in_specialty_district") or 0,
+                "score_grade": d.get("score_grade") or "분석중",
+                "naver_url": d.get("naver_url")
+            })
+        return result
+    finally:
+        conn.close()
 
 
 @app.get("/api/hospitals/{hospital_id}")

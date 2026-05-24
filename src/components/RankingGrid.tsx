@@ -56,7 +56,7 @@ export default function RankingGrid({ hospitals, rankings, selectedHospitalId, o
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {topHospitals.map((h, index) => {
+        {topHospitals.slice(0, 20).map((h, index) => {
           const isSelected = String(selectedHospitalId) === String(h.id);
           // 화면 표시 순위 = 현재 필터 결과 기준 index + 1
           const displayRank = index + 1;

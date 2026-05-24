@@ -130,9 +130,7 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
-  const filteredHospitals = hospitals.filter(h =>
-    h.name.toLowerCase().includes(searchKeyword.toLowerCase())
-  );
+
 
   // TOP20 제목 생성
   const getRankingTitle = () => {
@@ -186,6 +184,10 @@ function App() {
         departments={options.specialties}
         nowViewingTitle={nowViewing.title}
         nowViewingDesc={nowViewing.desc}
+        hospitals={hospitals}
+        selectedHospitalId={selectedHospitalId}
+        onSelectHospital={setSelectedHospitalId}
+        hasAnalyzed={hasAnalyzed}
       />
 
       <main className="flex-1 lg:ml-72 min-w-0 transition-all duration-300">
@@ -282,9 +284,9 @@ function App() {
                 )}
 
                 {/* TOP20 순위 */}
-                {filteredHospitals.length > 0 ? (
+                {rankings.length > 0 ? (
                   <RankingGrid
-                    hospitals={filteredHospitals}
+                    hospitals={hospitals}
                     rankings={rankings}
                     selectedHospitalId={selectedHospitalId}
                     onSelectHospital={setSelectedHospitalId}
@@ -292,7 +294,7 @@ function App() {
                   />
                 ) : (
                   <div className="bg-white rounded-2xl p-8 border border-slate-200 text-center text-slate-500 shadow-sm">
-                    선택한 조건에 해당하는 병원이 없습니다.
+                    선택한 조건에 해당하는 순위 데이터가 없습니다.
                   </div>
                 )}
 

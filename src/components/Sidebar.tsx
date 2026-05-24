@@ -1,5 +1,6 @@
 import React from 'react';
-import { Search, Activity, X } from 'lucide-react';
+import { Search, Activity, X, MapPin } from 'lucide-react';
+import type { Hospital } from '../types/hospital';
 
 interface SidebarProps {
   selectedCity?: string;
@@ -16,6 +17,10 @@ interface SidebarProps {
   departments?: string[];
   nowViewingTitle?: string;
   nowViewingDesc?: string;
+  hospitals?: Hospital[];
+  selectedHospitalId?: string | null;
+  onSelectHospital?: (id: string) => void;
+  hasAnalyzed?: boolean;
 }
 
 const DEFAULT_DISTRICTS = ['영통구', '팔달구', '장안구', '권선구'];
@@ -35,10 +40,19 @@ export default function Sidebar({
   districts = [],
   departments = [],
   nowViewingTitle = '분석 대기',
-  nowViewingDesc = '분석할 병원을 선택해주세요.'
+  nowViewingDesc = '분석할 병원을 선택해주세요.',
+  hospitals = [],
+  selectedHospitalId = null,
+  onSelectHospital = () => {},
+  hasAnalyzed = false
 }: SidebarProps) {
   const districtOptions = Array.isArray(districts) && districts.length > 0 ? districts : DEFAULT_DISTRICTS;
   const departmentOptions = Array.isArray(departments) && departments.length > 0 ? departments : DEFAULT_DEPARTMENTS;
+
+  // 검색어로 병원 필터링
+  const filteredHospitals = hospitals.filter(h =>
+    h.name.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
 
   return (
     <>
@@ -72,7 +86,7 @@ export default function Sidebar({
           </button>
         </div>
 
-        <div className="flex-1 p-6 flex flex-col gap-6 overflow-y-auto">
+        <div className="flex-1 p-6 flex flex-col gap-4 overflow-y-auto">
           <div>
             <h2 className="text-xs font-bold text-slate-400 mb-4 tracking-wider">SEARCH SETUP</h2>
 
@@ -116,23 +130,9 @@ export default function Sidebar({
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1.5">병원 검색</label>
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="text"
-                    value={searchKeyword}
-                    onChange={e => onSearchChange(e.target.value)}
-                    placeholder="병원명 입력"
-                    className="w-full p-2.5 pl-9 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
-                  />
-                </div>
-              </div>
-
               <button
                 onClick={onAnalyze}
-                className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-xl text-sm font-semibold shadow-md shadow-primary/25 transition-all active:scale-[0.98] mt-4"
+                className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-xl text-sm font-semibold shadow-md shadow-primary/25 transition-all active:scale-[0.98] mt-2"
               >
                 리포트 분석 실행
               </button>
@@ -141,7 +141,70 @@ export default function Sidebar({
 
           <hr className="border-slate-100" />
 
-          <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mt-auto">
+          {/* 병원 검색 및 목록 */}
+          <div className="flex-1 flex flex-col min-h-0">
+            <h2 className="text-xs font-bold text-slate-400 mb-3 tracking-wider">병원 목록</h2>
+            
+            <div className="relative mb-3">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={searchKeyword}
+                onChange={e => onSearchChange(e.target.value)}
+                placeholder="병원명 검색"
+                className="w-full p-2.5 pl-9 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+              />
+            </div>
+
+            <div className="flex-1 overflow-y-auto -mx-1 px-1" style={{ maxHeight: '280px' }}>
+              {!hasAnalyzed ? (
+                <div className="text-center py-6">
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    지역과 진료과를 선택한 뒤<br />리포트 분석 실행을 눌러주세요.
+                  </p>
+                </div>
+              ) : filteredHospitals.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-xs text-slate-400">
+                    {searchKeyword ? '검색어와 일치하는 병원이 없습니다.' : '선택한 조건에 해당하는 병원이 없습니다.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <p className="text-[10px] text-slate-400 mb-2">
+                    전체 {hospitals.length}개 병원{searchKeyword && ` · 검색 결과 ${filteredHospitals.length}개`}
+                  </p>
+                  {filteredHospitals.map((h) => {
+                    const isSelected = String(selectedHospitalId) === String(h.id);
+                    return (
+                      <div
+                        key={h.id}
+                        onClick={() => onSelectHospital(h.id)}
+                        className={`p-2.5 rounded-lg cursor-pointer transition-all text-sm
+                          ${isSelected
+                            ? 'bg-blue-50 border border-primary/30 text-primary font-semibold'
+                            : 'hover:bg-slate-50 border border-transparent text-slate-700'
+                          }`}
+                      >
+                        <div className="font-medium truncate text-[13px]">{h.name}</div>
+                        <div className="flex items-center gap-1 mt-0.5 text-[11px] text-slate-400">
+                          <MapPin className="w-3 h-3" />
+                          <span>{h.district}</span>
+                          <span>·</span>
+                          <span>{h.totalScore.toFixed(1)}점</span>
+                          <span>·</span>
+                          <span>리뷰 {(h.reviewCount || 0).toLocaleString()}건</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* NOW VIEWING */}
+          <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 shrink-0">
             <h2 className="text-[10px] font-bold text-slate-400 mb-2 tracking-wider">NOW VIEWING</h2>
             <p className="font-bold text-slate-800 text-lg mb-1 break-keep">
               {nowViewingTitle}
